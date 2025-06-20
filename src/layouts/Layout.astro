@@ -1,0 +1,232 @@
+---
+export interface Props {
+  title: string;
+  lang: 'ar' | 'en';
+  description?: string;
+  canonicalUrl?: string;
+}
+
+const { title, lang, description, canonicalUrl } = Astro.props;
+
+// Default description if none provided
+const defaultDescription = lang === 'ar' 
+  ? 'ToDoOps - خدمات تنفيذ انظمة ERP المتخصصة في المملكة العربية السعودية. نقدم خدمات تنفيذ وتخصيص اودو ERP للشركات مع دعم تقني مستمر وتدريب شامل.'
+  : 'ToDoOps - Professional ERP Implementation Services in Saudi Arabia. We provide Odoo ERP implementation, customization, training, and ongoing support for businesses.';
+
+const metaDescription = description || defaultDescription;
+
+// Set the document direction and language
+const dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+// Base URL for canonical and Open Graph
+const baseUrl = 'https://todoops.com';
+const fullCanonicalUrl = canonicalUrl || `${baseUrl}${Astro.url.pathname}`;
+---
+
+<!doctype html>
+<html lang={lang} dir={dir}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={metaDescription} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href={fullCanonicalUrl} />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={fullCanonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:site_name" content="ToDoOps" />
+    <meta property="og:locale" content={lang === 'ar' ? 'ar_SA' : 'en_US'} />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={fullCanonicalUrl} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={metaDescription} />
+    
+    <!-- Language alternates -->
+    {lang === 'ar' && (
+      <link rel="alternate" hreflang="en" href={`${baseUrl}/en${Astro.url.pathname === '/' ? '' : Astro.url.pathname}`} />
+    )}
+    {lang === 'en' && (
+      <link rel="alternate" hreflang="ar" href={`${baseUrl}${Astro.url.pathname.replace('/en', '') || '/'}`} />
+    )}
+    <link rel="alternate" hreflang="x-default" href={`${baseUrl}/`} />
+    
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://images.pexels.com" />
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    
+    <!-- Page title -->
+    <title>{title}</title>
+    
+    <!-- Additional head content from pages -->
+    <slot name="head" />
+  </head>
+  <body class={`font-${lang === 'ar' ? 'arabic' : 'english'} antialiased bg-white text-dark-900`}>
+    <!-- Page content -->
+    <slot />
+    
+    <!-- Global scripts -->
+    <script>
+      // Add any global JavaScript here
+      console.log('ToDoOps website loaded');
+      
+      // Add smooth scrolling behavior
+      document.documentElement.style.scrollBehavior = 'smooth';
+      
+      // Add focus management for accessibility
+      document.addEventListener('DOMContentLoaded', function() {
+        // Skip to main content functionality
+        const skipLink = document.querySelector('.skip-to-main');
+        if (skipLink) {
+          skipLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            const main = document.querySelector('main');
+            if (main) {
+              main.focus();
+              main.scrollIntoView();
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  /* Global styles */
+  html {
+    font-family: system-ui, sans-serif;
+    scroll-behavior: smooth;
+  }
+  
+  /* Arabic font for RTL content */
+  html[lang="ar"] {
+    font-family: 'Noto Sans Arabic', system-ui, sans-serif;
+  }
+  
+  /* English font for LTR content */
+  html[lang="en"] {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  /* Ensure proper text rendering */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  /* Focus styles for accessibility */
+  *:focus {
+    outline: 2px solid #714B67;
+    outline-offset: 2px;
+  }
+  
+  /* Skip to main content link for accessibility */
+  .skip-to-main {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: #714B67;
+    color: white;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: 4px;
+    z-index: 1000;
+    transition: top 0.3s;
+  }
+  
+  .skip-to-main:focus {
+    top: 6px;
+  }
+  
+  /* Ensure images are responsive by default */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Smooth transitions for interactive elements */
+  a, button {
+    transition: all 0.2s ease-in-out;
+  }
+  
+  /* Custom scrollbar for webkit browsers */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+  
+  /* Print styles */
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+    
+    body {
+      font-size: 12pt;
+      line-height: 1.4;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      page-break-after: avoid;
+    }
+    
+    p, li {
+      page-break-inside: avoid;
+    }
+  }
+  
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    body {
+      background: white;
+      color: black;
+    }
+    
+    a {
+      color: #0000EE;
+    }
+    
+    a:visited {
+      color: #551A8B;
+    }
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
